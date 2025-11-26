@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Complete E‑Commerce Website</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLMDJ8gADpA6UvF5S4rL6E1yE2J4O0tC0F5zG7d/hGg/pWw1g9jKk05y/G8z/pS5O5g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap');
+
+  :root {
+    --bg-dark: #0d0d0d;
+    --card-dark: #141414;
+    --accent: #8a2be2;
+    --accent-2: #6f2bd9;
+    --glass: rgba(255,255,255,0.04);
+
+    --bg-light: #f5f5f5;
+    --card-light: #fff;
+    --text-light: #111;
+  }
+
+  /* Default: Dark mode */
+  body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background: var(--bg-dark);
+    color: #fff;
+    transition: background 0.3s, color 0.3s;
+  }
+  header {
+    background: linear-gradient(135deg, rgba(138,43,226,0.12), rgba(107,47,194,0.06));
+    color: #fff;
+    padding: 30px 20px 10px 20px;
+    text-align: center;
+  }
+
+  .nav-row {
+    display: flex;
+    justify-content: center;
+    gap: 18px;
+    margin-top: 18px;
+    flex-wrap: wrap;
+  }
+  .nav-btn {
+    background: linear-gradient(180deg, rgba(138,43,226,0.16), rgba(107,47,194,0.06));
+    border: 1px solid rgba(138,43,226,0.18);
+    padding: 12px 20px;
+    border-radius: 999px;
+    color: #fff;
+    text-decoration: none;
+    font-weight: 600;
+    box-shadow: 0 6px 18px rgba(138,43,226,0.08);
+    transition: transform .18s ease, box-shadow .18s ease;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+  }
+  /* Ensure icons have correct spacing */
+  .nav-btn i {
+      margin-right: 8px;
+  }
+
+  .nav-btn:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 18px 40px rgba(138,43,226,0.18);
+  }
+
+  /* Search */
+  #searchBar {
+    padding: 20px;
+    text-align: center;
+  }
+  #searchInput {
+    width: 80%;
+    max-width: 480px;
+    padding: 14px;
+    border-radius: 12px;
+    border: none;
+    font-size: 16px;
+  }
+
+  /* Category Filter Buttons */
+  #categoryFilters {
+    text-align: center;
+    margin: 20px 0 10px;
+  }
+  #categoryFilters button {
+    background: var(--accent);
+    border: none;
+    color: white;
+    padding: 10px 18px;
+    margin: 5px;
+    border-radius: 999px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.3s ease;
+  }
+  #categoryFilters button.active,
+  #categoryFilters button:hover {
+    background: var(--accent-2);
+  }
+
+  /* Products Grid */
+  .products {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+    gap: 25px;
+    padding: 0 30px 30px;
+  }
+  .card {
+    background: var(--card-dark);
+    padding: 18px;
+    border-radius: 18px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+    text-align: center;
+    transition: transform .25s ease;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    user-select: none;
+  }
+  .card:hover {
+    transform: translateY(-12px);
+  }
+  .card img {
+    width: 100%;
+    border-radius: 12px;
+    object-fit: cover;
+    flex-grow: 1;
+  }
+  .card h3 {
+    margin: 12px 0 6px;
+  }
+  .card p {
+    margin: 0;
+    font-weight: 700;
+    font-size: 18px;
+    color: var(--accent);
+  }
+  .btn {
+    background: var(--accent);
+    color: #fff;
+    padding: 12px 18px;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    margin-top: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    transition: background 0.25s ease;
+  }
+  .btn:hover {
+    background: var(--accent-2);
+  }
+
+  /* Cart Icon */
+  .cart-icon {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    background: var(--accent);
+    padding: 12px 20px;
+    border-radius: 12px;
+    cursor: pointer;
+    z-index: 600;
+    font-weight: 700;
+    user-select: none;
+    box-shadow: 0 6px 18px rgba(138,43,226,0.18);
+  }
+  .cart-icon:hover {
+    background: var(--accent-2);
+  }
+
+  /* Popup Backdrop & Modal */
+  .popup-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+  .popup {
+    background: #151515;
+    padding: 22px;
+    border-radius: 14px;
+    width: 90%;
+    max-width: 480px;
+    max-height: 90vh;
+    overflow-y: auto;
+    color: #eee;
+    position: relative;
+  }
+  .popup h2 {
+    margin-top: 0;
+  }
+  .popup .close-btn {
+    position: absolute;
+    top: 14px;
+    right: 18px;
+    background: transparent;
+    border: none;
+    font-size: 24px;
+    color: #ccc;
+    cursor: pointer;
+  }
+  .popup .close-btn:hover {
+    color: white;
+  }
+  .popup img {
+    max-width: 100%;
+    border-radius: 14px;
+    margin-bottom: 18px;
+  }
+  .popup .btn {
+    width: 100%;
+  }
+
+  /* Checkout Section */
+  #checkout {
+    padding: 40px 20px;
+    max-width: 900px;
+    margin: 0 auto 60px;
+  }
+  #checkout h2 {
+    text-align: center;
+    margin-bottom: 24px;
+  }
+  .checkout-box {
+    background: #141414;
+    padding: 20px;
+    border-radius: 14px;
+    box-shadow: 0 0 30px rgba(138,43,226,0.2);
+  }
+  .checkout-box label {
+    display: block;
+    margin-top: 12px;
+    font-weight: 600;
+  }
+  .checkout-box input {
+    width: 100%;
+    padding: 12px;
+    margin-top: 6px;
+    border-radius: 10px;
+    border: none;
+    font-size: 16px;
+  }
+  .checkout-box button {
+    width: 100%;
+    margin-top: 15px;
+    background: #8a2be2;
+    padding: 14px;
+    border: none;
+    border-radius: 10px;
+    color: #fff;
+    font-size: 18px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  .checkout-box button:hover {
+    background: #6f2bd9;
+  }
+
+  /* Payment Section */
+  #paymentSection {
+    margin-top: 30px;
+    padding: 20px;
+    background: var(--card-dark);
+    border-radius: 14px;
+  }
+  #paymentSection h3 {
+    margin-top: 0;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .payment-methods {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    flex-wrap: wrap;
+  }
+  .payment-card {
+    background: #2c2c2c;
+    border-radius: 14px;
+    padding: 20px;
+    width: 180px;
+    box-shadow: 0 6px 20px rgba(138,43,226,0.3);
+    cursor: pointer;
+    color: white;
+    font-weight: 700;
+    text-align: center;
+    transition: background 0.3s ease;
+    user-select: none;
+  }
+  .payment-card:hover {
+    background: var(--accent-2);
+  }
+  .payment-logo {
+    font-size: 48px;
+    margin-bottom: 12px;
+  }
+
+  /* Login / Signup Modal */
+  #authModal .popup {
+    max-width: 400px;
+    color: #eee;
+  }
+  #authModal label {
+    display: block;
+    margin-top: 12px;
+    font-weight: 600;
+  }
+  #authModal input {
+    width: 100%;
+    padding: 10px;
+    margin-top: 6px;
+    border-radius: 10px;
+    border: none;
+    font-size: 15px;
+  }
+  #authModal button {
+    margin-top: 20px;
+    width: 100%;
+    padding: 12px;
+    border-radius: 12px;
+    border: none;
+    background: var(--accent);
+    color: white;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  #authModal button:hover {
+    background: var(--accent-2);
+  }
+  #authModal .switch-link {
+    margin-top: 14px;
+    text-align: center;
+    color: var(--accent);
+    cursor: pointer;
+    user-select: none;
+  }
+  #authModal .switch-link:hover {
+    color: var(--accent-2);
+  }
+
+  /* Admin Panel */
+  #adminPanel {
+    max-width: 600px;
+    margin: 40px auto 80px;
+    background: var(--card-dark);
+    padding: 20px;
+    border-radius: 14px;
+    box-shadow: 0 0 30px rgba(138,43,226,0.2);
+    color: #eee;
+  }
+  #adminPanel h2 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  #adminPanel label {
+    display: block;
+    margin-top: 12px;
+    font-weight: 600;
+  }
+  #adminPanel input {
+    width: 100%;
+    padding: 10px;
+    margin-top: 6px;
+    border-radius: 10px;
+    border: none;
+    font-size: 15px;
+  }
+  #adminPanel button {
+    margin-top: 20px;
+    width: 100%;
+    padding: 14px;
+    border-radius: 12px;
+    border: none;
+    background: var(--accent);
+    color: white;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  #adminPanel button:hover {
+    background: var(--accent-2);
+  }
+  #adminProducts {
+    margin-top: 30px;
+  }
+  #adminProducts .admin-product {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #222;
+    padding: 12px 15px;
+    margin-bottom: 8px;
+    border-radius: 10px;
+  }
+  #adminProducts .admin-product button {
+    background: #ff4c4c;
+    padding: 6px 12px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-weight: 700;
+    transition: background 0.3s ease;
+  }
+  #adminProducts .admin-product button:hover {
+    background: #ff1a1a;
+  }
+
+  /* Footer */
+  footer {
+    text-align: center;
+    padding: 40px 20px;
+    margin-top: 40px;
+    background: #0a0a0a;
+  }
+
+  /* Responsive Mobile */
+  @media (max-width: 600px) {
+    .nav-row {
+      gap: 12px;
+    }
+    #searchInput {
+      width: 95%;
+    }
+    .payment-methods {
+      flex-direction: column;
+      gap: 18px;
+    }
+    .payment-card {
+      width: 100%;
+    }
+    .products {
+      padding: 0 15px 30px;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 18px;
+    }
+  }
+
+  /* Light Mode */
+  body.light {
+    background: var(--bg-light);
+    color: var(--text-light);
+  }
+  body.light header {
+    color: var(--text-light);
+    background: linear-gradient(135deg, rgba(138,43,226,0.12), rgba(107,47,194,0.06));
+  }
+  body.light .card {
+    background: var(--card-light);
+    color: var(--text-light);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+  }
+  body.light .nav-btn {
+    background: linear-gradient(180deg, rgba(138,43,226,0.16), rgba(107,47,194,0.06));
+    border: 1px solid rgba(138,43,226,0.18);
+    color: var(--text-light);
+    box-shadow: 0 6px 18px rgba(138,43,226,0.08);
+  }
+  body.light .nav-btn:hover {
+    box-shadow: 0 18px 40px rgba(138,43,226,0.18);
+  }
+  body.light #searchInput {
+    background: #fff;
+    color: var(--text-light);
+  }
+  body.light .btn {
+    background: var(--accent);
+    color: #fff;
+  }
+  body.light .cart-icon {
+    background: var(--accent);
+    color: #fff;
+  }
+  body.light #checkout .checkout-box {
+    background: var(--card-light);
+    color: var(--text-light);
+    box-shadow: 0 0 30px rgba(138,43,226,0.2);
+  }
+  body.light #paymentSection {
+    background: var(--card-light);
+    color: var(--text-light);
+  }
+  body.light #adminPanel {
+    background: var(--card-light);
+    color: var(--text-light);
+  }
+  body.light #adminProducts .admin-product {
+    background: #eee;
+    color: var(--text-light);
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <img src="Maiz.jpeg" alt="Maiz Logo" style="width:160px; height:64px; border-radius:10px; margin:6px auto 16px auto; display:block;" />
+  <h1 style="font-size:42px;">✨ Premium Store ✨</h1>
+  <p>Your Modern Digital Shopping Experience</p>
+
+  <div class="nav-row">
+    <a class="nav-btn" href="#home"><i class="fas fa-home"></i>Home</a>
+    <a class="nav-btn" href="#products"><i class="fas fa-store"></i>Products</a>
+    <a class="nav-btn" href="#contact"><i class="fas fa-headset"></i>Contact</a>
+    <a class="nav-btn" href="#checkout"><i class="fas fa-receipt"></i>Checkout</a>
+    <button class="nav-btn" id="authBtn"><i class="fas fa-lock"></i>Login / Signup</button>
+    <button class="nav-btn" id="toggleThemeBtn"><i class="fas fa-moon"></i>Dark Mode</button>
+  </div>
+</header>
+
+<section id="searchBar" style="padding:20px; text-align:center;">
+  <input id="searchInput" onkeyup="searchProduct()" placeholder="🔍 Search products..." />
+</section>
+
+<div id="categoryFilters">
+  </div>
+
+<div class="products" id="products"></div>
+
+<div class="cart-icon" onclick="showCart()"><i class="fas fa-shopping-cart"></i> Cart (<span id="cartCount">0</span>)</div>
+
+<section id="checkout">
+  <h2>Checkout</h2>
+  <div class="checkout-box">
+    <label for="checkoutName">Name</label>
+    <input id="checkoutName" placeholder="Your full name" />
+    <label for="checkoutAddress">Address</label>
+    <input id="checkoutAddress" placeholder="Your address" />
+    <label for="checkoutPhone">Phone</label>
+    <input id="checkoutPhone" placeholder="Phone number" />
+    
+    <div id="paymentSection">
+      <h3>Select Payment Method</h3>
+      <div class="payment-methods">
+        <div class="payment-card" onclick="selectPayment('Bkash')">
+          <div class="payment-logo"><i class="fas fa-mobile-alt"></i></div>
+          Bkash
+        </div>
+        <div class="payment-card" onclick="selectPayment('Nagad')">
+          <div class="payment-logo"><i class="fas fa-credit-card"></i></div>
+          Nagad
+        </div>
+      </div>
+    </div>
+
+    <button id="confirmOrderBtn">Confirm Order</button>
+  </div>
+</section>
+
+<section id="adminPanel">
+  <h2>Admin Panel - Add / Remove Products</h2>
+  <label for="adminProductName">Product Name</label>
+  <input id="adminProductName" placeholder="Product name" />
+  <label for="adminProductPrice">Price (USD)</label>
+  <input id="adminProductPrice" placeholder="Price" type="number" min="0" />
+  <label for="adminProductCategory">Category</label>
+  <input id="adminProductCategory" placeholder="Category (e.g. Electronics)" />
+  <label for="adminProductImage">Image URL</label>
+  <input id="adminProductImage" placeholder="Image URL (optional)" />
+  <button id="adminAddProductBtn">Add Product</button>
+
+  <div id="adminProducts"></div>
+</section>
+
+<footer>
+  © 2025 | Premium E‑Commerce Store
+</footer>
+
+<div class="popup-backdrop" id="productModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="popup">
+    <button class="close-btn" aria-label="Close modal" onclick="closeProductModal()">×</button>
+    <img id="modalImg" src="" alt="Product image" />
+    <h2 id="modalTitle"></h2>
+    <p id="modalCategory" style="font-weight:600; color: var(--accent); margin: 4px 0;"></p>
+    <p id="modalPrice" style="font-weight:700; font-size: 20px;"></p>
+    <p id="modalDesc" style="margin-top: 12px; line-height:1.4;"></p>
+    <button class="btn" id="modalAddBtn">Add to Cart</button>
+  </div>
+</div>
+
+<div class="popup-backdrop" id="authModal" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+  <div class="popup">
+    <button class="close-btn" aria-label="Close modal" onclick="closeAuthModal()">×</button>
+    <h2 id="authTitle">Login</h2>
+    <form id="authForm">
+      <label for="authEmail">Email</label>
+      <input id="authEmail" type="email" required placeholder="Enter your email" />
+      <label for="authPassword">Password</label>
+      <input id="authPassword" type="password" required placeholder="Enter your password" />
+      <button type="submit" id="authSubmitBtn">Login</button>
+    </form>
+    <div class="switch-link" id="authSwitch">Don't have an account? Signup here</div>
+  </div>
+</div>
+
+<script>
+  /* DATA & STATE */
+  let products = [
+    {
+      id: 1,
+      name: "Wireless Headphones",
+      price: 120,
+      category: "Electronics",
+      img: "https://via.placeholder.com/300?text=Headphones",
+      desc: "High-quality wireless headphones with noise cancellation."
+    },
+    {
+      id: 2,
+      name: "Classic Novel",
+      price: 25,
+      category: "Books",
+      img: "https://via.placeholder.com/300?text=Book",
+      desc: "A classic novel loved by generations."
+    },
+    {
+      id: 3,
+      name: "Men's Jacket",
+      price: 60,
+      category: "Clothing",
+      img: "https://via.placeholder.com/300?text=Jacket",
+      desc: "Warm and stylish men's jacket for all seasons."
+    }
+  ];
+
+  let cart = [];
+  let selectedPayment = null;
+  let isLightMode = false;
+  let currentAuthMode = 'login';
+
+  /* DOM References */
+  const productsContainer = document.getElementById('products');
+  const cartCountEl = document.getElementById('cartCount');
+  const categoryFiltersEl = document.getElementById('categoryFilters');
+  const paymentSection = document.getElementById('paymentSection');
+  const confirmOrderBtn = document.getElementById('confirmOrderBtn');
+
+  const productModal = document.getElementById('productModal');
+  const modalImg = document.getElementById('modalImg');
+  const modalTitle = document.getElementById('modalTitle');
+  const modalCategory = document.getElementById('modalCategory');
+  const modalPrice = document.getElementById('modalPrice');
+  const modalDesc = document.getElementById('modalDesc');
+  const modalAddBtn = document.getElementById('modalAddBtn');
+
+  const authModal = document.getElementById('authModal');
+  const authBtn = document.getElementById('authBtn');
+  const authTitle = document.getElementById('authTitle');
+  const authForm = document.getElementById('authForm');
+  const authSwitch = document.getElementById('authSwitch');
+  const authSubmitBtn = document.getElementById('authSubmitBtn');
+
+  const toggleThemeBtn = document.getElementById('toggleThemeBtn');
+
+  // Admin
+  const adminPanel = document.getElementById('adminPanel');
+  const adminAddProductBtn = document.getElementById('adminAddProductBtn');
+  const adminProductName = document.getElementById('adminProductName');
+  const adminProductPrice = document.getElementById('adminProductPrice');
+  const adminProductCategory = document.getElementById('adminProductCategory');
+  const adminProductImage = document.getElementById('adminProductImage');
+  const adminProductsContainer = document.getElementById('adminProducts');
+
+  /* FUNCTIONS */
+
+  // Render products with optional category filter
+  function renderProducts(filterCategory = null) {
+    productsContainer.innerHTML = '';
+
+    const filtered = filterCategory && filterCategory !== 'all'
+      ? products.filter(p => p.category.toLowerCase() === filterCategory.toLowerCase())
+      : products;
+
+    filtered.forEach(product => {
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.tabIndex = 0;
+      card.setAttribute('role', 'button');
+      card.setAttribute('aria-pressed', 'false');
+      card.innerHTML = `
+        <img src="${product.img}" alt="${product.name}" />
+        <h3>${product.name}</h3>
+        <p>$${product.price}</p>
+        <button class="btn">Add to Cart</button>
+      `;
+
+      // Open modal on click except button
+      card.addEventListener('click', e => {
+        if (e.target.tagName.toLowerCase() !== 'button') {
+          openProductModal(product);
+        }
+      });
+
+      // Add to cart button
+      const btn = card.querySelector('button');
+      btn.onclick = (e) => {
+        e.stopPropagation();
+        addToCart(product);
+      };
+
+      productsContainer.appendChild(card);
+    });
+  }
+
+  // Render category buttons
+  function renderCategories() {
+    const cats = [...new Set(products.map(p => p.category))];
+    categoryFiltersEl.innerHTML = '';
+
+    const allBtn = document.createElement('button');
+    allBtn.textContent = 'All';
+    allBtn.classList.add('active');
+    allBtn.onclick = () => {
+      setActiveCategory('all');
+      renderProducts();
+    };
+    categoryFiltersEl.appendChild(allBtn);
+
+    cats.forEach(cat => {
+      const btn = document.createElement('button');
+      btn.textContent = cat;
+      btn.onclick = () => {
+        setActiveCategory(cat);
+        renderProducts(cat);
+      };
+      categoryFiltersEl.appendChild(btn);
+    });
+  }
+
+  // Set active category button style
+  function setActiveCategory(cat) {
+    [...categoryFiltersEl.children].forEach(btn => {
+      btn.classList.toggle('active', btn.textContent.toLowerCase() === cat.toLowerCase());
+    });
+  }
+
+  // Add product to cart
+  function addToCart(product) {
+    cart.push(product);
+    updateCartCount();
+    alert(`Added "${product.name}" to cart.`);
+  }
+
+  // Update cart count display
+  function updateCartCount() {
+    cartCountEl.textContent = cart.length;
+  }
+
+  // Show cart contents in alert
+  function showCart() {
+    if (cart.length === 0) {
+      alert('Cart is empty!');
+      return;
+    }
+    let summary = '';
+    let total = 0;
+    cart.forEach((item, i) => {
+      summary += `${i + 1}. ${item.name} - $${item.price}\n`;
+      total += item.price;
+    });
+    summary += `\nTotal: $${total.toFixed(2)}`;
+    alert(summary);
+  }
+
+  // Search products live
+  function searchProduct() {
+    const input = document.getElementById('searchInput').value.toLowerCase();
+    const cards = productsContainer.children;
+
+    Array.from(cards).forEach(card => {
+      const text = card.innerText.toLowerCase();
+      card.style.display = text.includes(input) ? 'flex' : 'none';
+    });
+  }
+
+  // Product Details Modal
+  function openProductModal(product) {
+    modalImg.src = product.img;
+    modalImg.alt = product.name;
+    modalTitle.textContent = product.name;
+    modalCategory.textContent = `Category: ${product.category}`;
+    modalPrice.textContent = `$${product.price}`;
+    modalDesc.textContent = product.desc || 'No description available.';
+    modalAddBtn.onclick = () => {
+      addToCart(product);
+      closeProductModal();
+    };
+    productModal.style.display = 'flex';
+  }
+  function closeProductModal() {
+    productModal.style.display = 'none';
+  }
+
+  // Payment selection
+  function selectPayment(method) {
+    selectedPayment = method;
+    alert(`Payment method selected: ${method}`);
+  }
+
+  // Confirm order
+  confirmOrderBtn.onclick = () => {
+    const name = document.getElementById('checkoutName').value.trim();
+    const address = document.getElementById('checkoutAddress').value.trim();
+    const phone = document.getElementById('checkoutPhone').value.trim();
+
+    if (!name || !address || !phone) {
+      alert('Please fill all checkout fields.');
+      return;
+    }
+    if (cart.length === 0) {
+      alert('Your cart is empty!');
+      return;
+    }
+    if (!selectedPayment) {
+      alert('Please select a payment method.');
+      return;
+    }
+    alert(`Thank you, ${name}! Your order has been placed using ${selectedPayment}.\nTotal: $${cart.reduce((a,b) => a + b.price, 0).toFixed(2)}`);
+    cart = [];
+    updateCartCount();
+    document.getElementById('checkoutName').value = '';
+    document.getElementById('checkoutAddress').value = '';
+    document.getElementById('checkoutPhone').value = '';
+    selectedPayment = null;
+  };
+
+  // AUTH MODAL
+  authBtn.onclick = () => openAuthModal();
+  function openAuthModal() {
+    authModal.style.display = 'flex';
+    setAuthMode('login');
+  }
+  function closeAuthModal() {
+    authModal.style.display = 'none';
+  }
+  function setAuthMode(mode) {
+    currentAuthMode = mode;
+    authTitle.textContent = mode === 'login' ? 'Login' : 'Signup';
+    authSubmitBtn.textContent = mode === 'login' ? 'Login' : 'Signup';
+    authSwitch.textContent = mode === 'login'
+      ? "Don't have an account? Signup here"
+      : "Already have an account? Login here";
+  }
+  authSwitch.onclick = () => {
+    setAuthMode(currentAuthMode === 'login' ? 'signup' : 'login');
+  };
+  authForm.onsubmit = e => {
+    e.preventDefault();
+    const email = document.getElementById('authEmail').value.trim();
+    const password = document.getElementById('authPassword').value.trim();
+    if (!email || !password) {
+      alert('Please enter both email and password.');
+      return;
+    }
+    alert(`${currentAuthMode === 'login' ? 'Logged in' : 'Signed up'} as ${email} (demo only)`);
+    closeAuthModal();
+  };
+
+  // Admin Panel Functions
+  function renderAdminProducts() {
+    adminProductsContainer.innerHTML = '';
+    products.forEach(p => {
+      const div = document.createElement('div');
+      div.className = 'admin-product';
+      div.innerHTML = `
+        <div>${p.name} ($${p.price}) - <em>${p.category}</em></div>
+        <button aria-label="Remove ${p.name}">Remove</button>
+      `;
+      div.querySelector('button').onclick = () => {
+        if (confirm(`Remove product "${p.name}"?`)) {
+          products = products.filter(prod => prod.id !== p.id);
+          renderProducts();
+          renderCategories();
+          renderAdminProducts();
+        }
+      };
+      adminProductsContainer.appendChild(div);
+    });
+  }
+
+  adminAddProductBtn.onclick = () => {
+    const name = adminProductName.value.trim();
+    const price = parseFloat(adminProductPrice.value);
+    const category = adminProductCategory.value.trim();
+    let img = adminProductImage.value.trim();
+
+    if (!name || !price || !category) {
+      alert('Please fill all required fields (name, price, category).');
+      return;
+    }
+    if (!img) {
+      img = "https://via.placeholder.com/300"; // default image
+    }
+    const newProduct = {
+      id: Date.now(),
+      name,
+      price,
+      category,
+      img,
+      desc: ''
+    };
+    products.push(newProduct);
+
+    // Clear inputs
+    adminProductName.value = '';
+    adminProductPrice.value = '';
+    adminProductCategory.value = '';
+    adminProductImage.value = '';
+
+    renderProducts();
+    renderCategories();
+    renderAdminProducts();
+    alert(`Product "${name}" added!`);
+  };
+
+  // Theme toggle
+  toggleThemeBtn.onclick = () => {
+    isLightMode = !isLightMode;
+    document.body.classList.toggle('light', isLightMode);
+    // Change text and icon based on mode
+    if (isLightMode) {
+        toggleThemeBtn.innerHTML = '<i class="fas fa-sun"></i>Light Mode';
+    } else {
+        toggleThemeBtn.innerHTML = '<i class="fas fa-moon"></i>Dark Mode';
+    }
+  };
+
+  // Initialize
+  renderProducts();
+  renderCategories();
+  renderAdminProducts();
+
+</script>
+
+</body>
+</html>
